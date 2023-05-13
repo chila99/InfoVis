@@ -18,4 +18,4 @@ df = pd.DataFrame(data)
 #  save the dataframe as a json file
 df.reset_index(drop=True, inplace=True)
 print(df)
-df.to_json('trivariate.json', orient='records')
+df.to_json('./trivariate.json', orient='records')
