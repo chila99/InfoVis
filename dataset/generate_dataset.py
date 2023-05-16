@@ -1,7 +1,7 @@
 import random
 import pandas as pd
 
-data_cases = 10
+data_cases = 14
 v1_range = 20
 v2_range = 20
 v3_range = 100
@@ -17,5 +17,4 @@ data = {
 df = pd.DataFrame(data) 
 #  save the dataframe as a json file
 df.reset_index(drop=True, inplace=True)
-print(df)
 df.to_json('./trivariate.json', orient='records')

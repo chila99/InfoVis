@@ -47,7 +47,8 @@ function updateDrawing(data) {
         .data(data)
         .attr("cx", function(d) { return xScale(d.v1); })
         .attr("cy", function(d) { return yScale(d.v2); })
-        .attr("r", function(d) { return rScale(d.v3); });
+        .attr("r", function(d) { return rScale(d.v3); })
+        .attr("fill", function(d) { return d3.rgb(d.v1 * 255 / max_v1, d.v2 * 255 / max_v2, d.v3 * 255 / max_v3); });
 
     circles.enter().append("circle")
         .attr("cx", function(d) { return xScale(d.v1); })
@@ -67,13 +68,61 @@ function drawAxes() {
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + margin_bottom + ")")
+        .on("click", function() {
+            console.log("click on x axis");
+            switchXR();
+        })  
         .call(xAxis);
 
     // draw the y-axis
     svg.append("g")
         .attr("class", "y axis")
         .attr("transform", "translate(" + margin.left + ",0)")
+        .on("click", function() {
+            // newXscale = xScale.copy();
+            console.log("click on y axis");
+            switchYR();
+        })
         .call(yAxis);
+}
+
+function switchXR(n) {
+    domainCopy = xScale.domain();
+    xScale.domain(rScale.domain());
+    rScale.domain(domainCopy);
+
+
+    var svg = d3.select("svg");
+    svg.select(".x.axis")
+        .transition()
+        .duration(1000)
+        .call(d3.axisBottom(xScale).ticks(10));
+
+    var circles = svg.selectAll("circle")
+        .transition()
+        .duration(1000)
+        .attr("cx", function(d) { return xScale(d.v3); })
+        .attr("cy", function(d) { return yScale(d.v2); })
+        .attr("r", function(d) { return rScale(d.v1); });
+}
+
+function switchYR() {
+    domainCopy = yScale.domain();
+    yScale.domain(rScale.domain());
+    rScale.domain(domainCopy);
+
+    var svg = d3.select("svg");
+    var circles = svg.selectAll("circle")
+        .transition()
+        .duration(1000)
+        .attr("cx", function(d) { return xScale(d.v1); })
+        .attr("cy", function(d) { return yScale(d.v3); })
+        .attr("r", function(d) { return rScale(d.v2); });
+
+    svg.select(".y.axis")
+        .transition()
+        .duration(1000)
+        .call(d3.axisLeft(yScale).ticks(10));
 }
 
 d3.json("dataset/trivariate.json")
