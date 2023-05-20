@@ -3,7 +3,7 @@ var margin = {top: 30, right: 50, bottom: 30, left: 50};
 var svg = d3.select("svg");
 
 width = window.innerWidth - margin.left - margin.right;
-height = 500 - margin.top - margin.bottom;
+height = 700 - margin.top - margin.bottom;
 
 margin_bottom = 100 + height;
 margin_top = 50;
@@ -59,9 +59,11 @@ function updateDrawing(data) {
     circles.exit().remove();
 }
 
-function drawAxes() {
+function drawAxes(data) {
 
     var svg = d3.select("svg");
+
+    console.log(data[0]);
 
     margin_bottom = margin.bottom + height;
     // draw the x-axis
@@ -69,8 +71,12 @@ function drawAxes() {
         .attr("class", "x axis")
         .attr("transform", "translate(0," + margin_bottom + ")")
         .on("click", function() {
-            console.log("click on x axis");
-            switchXR();
+            for (var i = 0; i < data.length; i++) {
+                temp = data[i]["v1"];
+                data[i]["v1"] = data[i]["v2"];
+                data[i]["v2"] = temp;
+                redraw(data);
+            }
         })  
         .call(xAxis);
 
@@ -79,59 +85,47 @@ function drawAxes() {
         .attr("class", "y axis")
         .attr("transform", "translate(" + margin.left + ",0)")
         .on("click", function() {
-            // newXscale = xScale.copy();
-            console.log("click on y axis");
-            switchYR();
+            for (var i = 0; i < data.length; i++) {
+                temp = data[i]["v1"];
+                data[i]["v1"] = data[i]["v3"];
+                data[i]["v3"] = temp;
+                redraw(data);
+            }
         })
         .call(yAxis);
 }
 
-function switchXR(n) {
-    domainCopy = xScale.domain();
-    xScale.domain(rScale.domain());
-    rScale.domain(domainCopy);
-
-
+function redraw(data) {
     var svg = d3.select("svg");
-    svg.select(".x.axis")
-        .transition()
-        .duration(1000)
-        .call(d3.axisBottom(xScale).ticks(10));
 
-    var circles = svg.selectAll("circle")
-        .transition()
-        .duration(1000)
-        .attr("cx", function(d) { return xScale(d.v3); })
-        .attr("cy", function(d) { return yScale(d.v2); })
-        .attr("r", function(d) { return rScale(d.v1); });
-}
+    // transition for the change in axes
+    var max_v1 = d3.max(data, function(d) { return d.v1; });
+    var max_v2 = d3.max(data, function(d) { return d.v2; });
+    var max_v3 = d3.max(data, function(d) { return d.v3; });
 
-function switchYR() {
-    domainCopy = yScale.domain();
-    yScale.domain(rScale.domain());
-    rScale.domain(domainCopy);
+    updateXScaleDomain(data);
+    updateYScaleDomain(data);
+    updateRScaleDomain(data);
+    
+    var xAxis = d3.transition().duration(1000).select(".x.axis").call(d3.axisBottom(xScale).ticks(10));  		// Bottom = ticks below
+    var yAxis = d3.transition().duration(1000).select(".y.axis").call(d3.axisLeft(yScale).ticks(10));   // Left = ticks on the left
+    var rAxis = d3.transition().duration(1000).select(".r.axis").call(d3.axisLeft(rScale).ticks(10));   // Left = ticks on the left
 
-    var svg = d3.select("svg");
     var circles = svg.selectAll("circle")
         .transition()
         .duration(1000)
         .attr("cx", function(d) { return xScale(d.v1); })
-        .attr("cy", function(d) { return yScale(d.v3); })
-        .attr("r", function(d) { return rScale(d.v2); });
-
-    svg.select(".y.axis")
-        .transition()
-        .duration(1000)
-        .call(d3.axisLeft(yScale).ticks(10));
+        .attr("cy", function(d) { return yScale(d.v2); })
+        .attr("r", function(d) { return rScale(d.v3); })
+        .attr("fill", function(d) { return d3.rgb(d.v1 * 255 / max_v1, d.v2 * 255 / max_v2, d.v3 * 255 / max_v3);});
 }
 
 d3.json("dataset/trivariate.json")
     .then(function(data) {
-        console.log(data);
         updateXScaleDomain(data);
         updateYScaleDomain(data);
         updateRScaleDomain(data);
-        drawAxes();
+        drawAxes(data);
         updateDrawing(data);
     })
     .catch(function(error) {
