@@ -48,13 +48,17 @@ function updateDrawing(data) {
         .attr("cx", function(d) { return xScale(d.v1); })
         .attr("cy", function(d) { return yScale(d.v2); })
         .attr("r", function(d) { return rScale(d.v3); })
-        .attr("fill", function(d) { return d3.rgb(d.v1 * 255 / max_v1, d.v2 * 255 / max_v2, d.v3 * 255 / max_v3); });
+        .attr("fill", function(d) { return d3.rgb(d.v1 * 255 / max_v1, d.v2 * 255 / max_v2, d.v3 * 255 / max_v3); })
+        .attr("stroke", "black")
+        .attr("stroke-width", 1);
 
     circles.enter().append("circle")
         .attr("cx", function(d) { return xScale(d.v1); })
         .attr("cy", function(d) { return yScale(d.v2); })
         .attr("r", function(d) { return rScale(d.v3); })
-        .attr("fill", function(d) { return d3.rgb(d.v1 * 255 / max_v1, d.v2 * 255 / max_v2, d.v3 * 255 / max_v3); });
+        .attr("fill", function(d) { return d3.rgb(d.v1 * 255 / max_v1, d.v2 * 255 / max_v2, d.v3 * 255 / max_v3); })
+        .attr("stroke", "black")
+        .attr("stroke-width", 1);
 
     circles.exit().remove();
 }
@@ -116,8 +120,7 @@ function redraw(data) {
         .duration(1000)
         .attr("cx", function(d) { return xScale(d.v1); })
         .attr("cy", function(d) { return yScale(d.v2); })
-        .attr("r", function(d) { return rScale(d.v3); })
-        .attr("fill", function(d) { return d3.rgb(d.v1 * 255 / max_v1, d.v2 * 255 / max_v2, d.v3 * 255 / max_v3);});
+        .attr("r", function(d) { return rScale(d.v3); });
 }
 
 d3.json("dataset/trivariate.json")
