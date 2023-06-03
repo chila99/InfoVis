@@ -34,10 +34,12 @@ function updateYScaleDomain(data) {
 }
 
 function updateRScaleDomain(data) {
+    console.log(d3.max(data, function(d) { return d.v3; }));
     rScale.domain([0, d3.max(data, function(d) { return d.v3; })]);
 }
 
 function updateDrawing(data) {
+    // update the max values
     var max_v1 = d3.max(data, function(d) { return d.v1; });
     var max_v2 = d3.max(data, function(d) { return d.v2; });
     var max_v3 = d3.max(data, function(d) { return d.v3; });
@@ -55,22 +57,58 @@ function updateDrawing(data) {
         .attr("stroke", "black")
         .attr("stroke-width", 3)
         .on("mouseover", function(d) {
-            // get the circles coordinates, and add the value as text
+            // Ottieni le coordinate del cerchio e i valori delle variabili
             const r = d3.select(this).attr("r");
             const x = d3.select(this).attr("cx");
             const y = d3.select(this).attr("cy");
 
+            // Seleziona l'elemento DOM (circle) che ha scatenato l'evento
+            var circle = d.target;
+
+            // Ottieni i dati associati al circle
+            var circleData = d3.select(circle).data()[0];
+
+            const v1 = circleData.v1;
+            const v2 = circleData.v2;
+            const v3 = circleData.v3;
+
+            // Aggiungi il rettangolo del tooltip
+            svg.append("rect")
+                .attr("class", "tooltip-background")
+                .attr("x", x - 50)
+                .attr("y", y - 80)
+                .attr("width", 100)
+                .attr("height", 70)
+                .attr("stroke", "black")
+                .attr("stroke-width", 2)
+            
+            // Aggiungi il testo del tooltip
             svg.append("text")
-            .attr("class", "value")
-            .attr("x", x)
-            .attr("y", y)
-            .attr("text-anchor", "middle")
-            .text(parseFloat(r).toFixed(2));    
-          })
-          .on("mouseout", function() {
-            // Remove v3 value and its background on mouseout
-            svg.selectAll(".value, .value-background").remove();
-            });
+                .attr("class", "tooltip")
+                .attr("x", x)
+                .attr("y", y - 60)
+                .attr("text-anchor", "middle")
+                .text(current_x + " : " + v1);
+
+            svg.append("text")
+                .attr("class", "tooltip")
+                .attr("x", x)
+                .attr("y", y - 45)
+                .attr("text-anchor", "middle")
+                .text(current_y + " :" + v2);
+
+            svg.append("text")
+                .attr("class", "tooltip")
+                .attr("x", x)
+                .attr("y", y -30)
+                .attr("text-anchor", "middle")
+                .text(current_r + " : " + v3);
+        })
+        .on("mouseout", function() {
+            // Rimuovi il tooltip quando il mouse esce dal cerchio
+            svg.selectAll(".tooltip, .tooltip-background").remove();
+        });
+        
     circles.exit().remove();
 }
 
@@ -85,8 +123,8 @@ function drawAxes(data) {
         .on("click", function() {
             for (var i = 0; i < data.length; i++) {
                 temp = data[i]["v1"];
-                data[i]["v1"] = data[i]["v2"];
-                data[i]["v2"] = temp;
+                data[i]["v1"] = data[i]["v3"];
+                data[i]["v3"] = temp;
             }
             // sort the data by v3
             data.sort(function(a, b) {
@@ -105,8 +143,8 @@ function drawAxes(data) {
         .attr("transform", "translate(" + margin.left + ",0)")
         .on("click", function() {
             for (var i = 0; i < data.length; i++) {
-                temp = data[i]["v1"];
-                data[i]["v1"] = data[i]["v3"];
+                temp = data[i]["v2"];
+                data[i]["v2"] = data[i]["v3"];
                 data[i]["v3"] = temp;
             }
             // sort the data by v3
@@ -143,6 +181,7 @@ function drawAxes(data) {
 }
 
 function redraw(data) {
+    
     var svg = d3.select("svg");
     updateXScaleDomain(data);
     updateYScaleDomain(data);
@@ -150,7 +189,6 @@ function redraw(data) {
     
     d3.transition().duration(1000).select(".x.axis").call(d3.axisBottom(xScale).ticks(10));  		// Bottom = ticks below
     d3.transition().duration(1000).select(".y.axis").call(d3.axisLeft(yScale).ticks(10));   // Left = ticks on the left
-    d3.transition().duration(1000).select(".r.axis").call(d3.axisLeft(rScale).ticks(10));   // Left = ticks on the left
 
     svg.selectAll("circle")
         .transition()
