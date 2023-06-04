@@ -1,4 +1,4 @@
-const margin = {top: 30, right: 50, bottom: 30, left: 50};
+const margin = {top: 80, right: 50, bottom: 80, left: 50};
 
 var svg = d3.select("svg");
 
@@ -58,7 +58,6 @@ function updateDrawing(data) {
         .attr("stroke-width", 3)
         .on("mouseover", function(d) {
             // Ottieni le coordinate del cerchio e i valori delle variabili
-            const r = d3.select(this).attr("r");
             const x = d3.select(this).attr("cx");
             const y = d3.select(this).attr("cy");
 
@@ -67,10 +66,6 @@ function updateDrawing(data) {
 
             // Ottieni i dati associati al circle
             var circleData = d3.select(circle).data()[0];
-
-            const v1 = circleData.v1;
-            const v2 = circleData.v2;
-            const v3 = circleData.v3;
 
             // Aggiungi il rettangolo del tooltip
             svg.append("rect")
@@ -82,27 +77,18 @@ function updateDrawing(data) {
                 .attr("stroke", "black")
                 .attr("stroke-width", 2)
             
-            // Aggiungi il testo del tooltip
-            svg.append("text")
-                .attr("class", "tooltip")
-                .attr("x", x)
-                .attr("y", y - 60)
-                .attr("text-anchor", "middle")
-                .text(current_x + " : " + v1);
+            // ordina le variabili in ordine lessicografico
+            var variables = [current_x, current_y, current_r];
+            variables.sort();
 
-            svg.append("text")
-                .attr("class", "tooltip")
-                .attr("x", x)
-                .attr("y", y - 45)
-                .attr("text-anchor", "middle")
-                .text(current_y + " :" + v2);
-
-            svg.append("text")
-                .attr("class", "tooltip")
-                .attr("x", x)
-                .attr("y", y -30)
-                .attr("text-anchor", "middle")
-                .text(current_r + " : " + v3);
+            for (var i = 0; i < variables.length; i++ ){
+                svg.append("text")
+                    .attr("class", "tooltip")
+                    .attr("x", x)
+                    .attr("y", y - 60 + 15 * i)
+                    .attr("text-anchor", "middle")
+                    .text(variables[i] + " : " + circleData[variables[i]]);
+            }
         })
         .on("mouseout", function() {
             // Rimuovi il tooltip quando il mouse esce dal cerchio
