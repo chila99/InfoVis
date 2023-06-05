@@ -114,7 +114,7 @@ function drawAxes(data) {
             }
             // sort the data by v3
             data.sort(function(a, b) {
-                return -(a.v3 - b.v3);
+                return (a.v3 - b.v3);
             });
             temp = current_x;
             current_x = current_r;
@@ -135,7 +135,7 @@ function drawAxes(data) {
             }
             // sort the data by v3
             data.sort(function(a, b) {
-                return -(a.v3 - b.v3);
+                return (a.v3 - b.v3);
             });
             temp = current_y;
             current_y = current_r;
