@@ -6,10 +6,16 @@ svg {
 
 .tooltip {
     font-size: 15px;
+    font-family: 'Roboto', sans-serif;
     fill: #000;
 }
 
 .tooltip-background {
     fill: #fff;
     opacity: 1;
+}
+
+h1, h2 {
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
 }

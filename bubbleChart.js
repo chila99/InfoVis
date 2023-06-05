@@ -85,7 +85,7 @@ function updateDrawing(data) {
                 svg.append("text")
                     .attr("class", "tooltip")
                     .attr("x", x)
-                    .attr("y", y - 60 + 15 * i)
+                    .attr("y", y - 55 + 15 * i)
                     .attr("text-anchor", "middle")
                     .text(variables[i] + " : " + circleData[variables[i]]);
             }
