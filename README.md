@@ -6,6 +6,6 @@ Crea un file json con dei dati trivariati: ci sono 10 data-case e ogni data-case
 
 ## Contenuto Repository
 Questo repository contiene i seguenti elementi:
-* [dataset] (dataset/) contenente il file utilizzato per generare il dataset e il dataset stesso.
-* [lib] (lib/) contenente la libreria d3.js necessaria per il funzionamento dell'applicazione.
-* [bubbleChart] (bubbleChart/) contenente tutti i file utili realizzati per il progetto
+* [dataset](dataset/) contenente il file utilizzato per generare il dataset e il dataset stesso.
+* [lib](lib/) contenente la libreria d3.js necessaria per il funzionamento dell'applicazione.
+* [bubbleChart](bubbleChart/) contenente tutti i file utili realizzati per il progetto
